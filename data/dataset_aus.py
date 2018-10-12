@@ -114,8 +114,8 @@ class AusDataset(DatasetBase):
 
     def _get_img_by_id(self, id):
         filepath = os.path.join(self._root, self._imgs_dir, id)
-        filepath = glob.glob(filepath +"*")[0]
-        print(filepath)
+        # filepath = glob.glob(filepath +"*")[0]
+        filepath += '.jpg'
         return cv_utils.read_cv2_img(filepath), filepath
 
     def _generate_random_cond(self):

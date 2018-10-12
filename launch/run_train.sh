@@ -8,7 +8,7 @@ python2 train.py \
 --test_ids_file "test_ids_0929.csv" \
 --images_folder "imgs_all" \
 --aus_file "aus_1009.pkl" \
---load_epoch 56 \
+--load_epoch 52 \
 --nepochs_no_decay 60 \
 --nepochs_decay 40 \
 --n_threads_train 0

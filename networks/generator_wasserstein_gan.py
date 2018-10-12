@@ -26,32 +26,47 @@ class Generator(NetworkBase):
         for i in range(repeat_num):
             layers.append(ResidualBlock(dim_in=curr_dim, dim_out=curr_dim))
 
+
+        self.main = nn.Sequential(*layers)
+
+        layers = []
         # Up-Sampling
+        dim_backup = curr_dim
         for i in range(2):
             layers.append(nn.ConvTranspose2d(curr_dim, curr_dim//2, kernel_size=4, stride=2, padding=1, bias=False))
             layers.append(nn.InstanceNorm2d(curr_dim//2, affine=True))
             layers.append(nn.ReLU(inplace=True))
             curr_dim = curr_dim // 2
-
-        self.main = nn.Sequential(*layers)
-
-        layers = []
         layers.append(nn.Conv2d(curr_dim, 3, kernel_size=7, stride=1, padding=3, bias=False))
         layers.append(nn.Tanh())
         self.img_reg = nn.Sequential(*layers)
 
         layers = []
+        # Up-Sampling
+        curr_dim = dim_backup
+        for i in range(2):
+            layers.append(nn.ConvTranspose2d(curr_dim, curr_dim//2, kernel_size=4, stride=2, padding=1, bias=False))
+            layers.append(nn.InstanceNorm2d(curr_dim//2, affine=True))
+            layers.append(nn.ReLU(inplace=True))
+            curr_dim = curr_dim // 2
         layers.append(nn.Conv2d(curr_dim, 1, kernel_size=7, stride=1, padding=3, bias=False))
         layers.append(nn.Sigmoid())
         self.attetion_reg = nn.Sequential(*layers)
 
+        for param in self.main.parameters():
+            param.requires_grad = False
+        for param in self.attetion_reg.parameters():
+            param.requires_grad = False
+
     def forward(self, x, c):
         # replicate spatially and concatenate domain information
-        c = c.unsqueeze(2).unsqueeze(3)
-        c = c.expand(c.size(0), c.size(1), x.size(2), x.size(3))
-        x = torch.cat([x, c], dim=1)
-        features = self.main(x)
-        return self.img_reg(features), self.attetion_reg(features)
+        with torch.no_grad():
+            c = c.unsqueeze(2).unsqueeze(3)
+            c = c.expand(c.size(0), c.size(1), x.size(2), x.size(3))
+            x = torch.cat([x, c], dim=1)
+            features = self.main(x)
+            attention = self.attetion_reg(features)
+        return self.img_reg(features), attention
 
 class ResidualBlock(nn.Module):
     """Residual Block."""

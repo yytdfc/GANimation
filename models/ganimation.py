@@ -57,7 +57,7 @@ class GANimation(BaseModel):
         self._current_lr_D = self._opt.lr_D
 
         # initialize optimizers
-        self._optimizer_G = torch.optim.Adam(self._G.parameters(), lr=self._current_lr_G,
+        self._optimizer_G = torch.optim.Adam(self._G.img_reg.parameters(), lr=self._current_lr_G,
                                              betas=[self._opt.G_adam_b1, self._opt.G_adam_b2])
         self._optimizer_D = torch.optim.Adam(self._D.parameters(), lr=self._current_lr_D,
                                              betas=[self._opt.D_adam_b1, self._opt.D_adam_b2])
@@ -108,7 +108,9 @@ class GANimation(BaseModel):
             self._input_desired_cond = self._input_desired_cond.cuda(self._gpu_ids[0], async=True)
 
     def set_train(self):
-        self._G.train()
+        self._G.img_reg.train()
+        self._G.main.eval()
+        self._G.attetion_reg.eval()
         self._D.train()
         self._is_train = True
 

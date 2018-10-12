@@ -84,6 +84,8 @@ class BaseModel(object):
         torch.save(optimizer.state_dict(), save_path)
 
     def _load_optimizer(self, optimizer, optimizer_label, epoch_label):
+        pass
+        return
         load_filename = 'opt_epoch_%s_id_%s.pth' % (epoch_label, optimizer_label)
         load_path = os.path.join(self._save_dir, load_filename)
         assert os.path.exists(
