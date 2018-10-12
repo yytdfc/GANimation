@@ -1,5 +1,7 @@
 from __future__ import print_function
 import numpy as np
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 def plot_au(img, aus, title=None):
@@ -51,13 +53,12 @@ def plot_au(img, aus, title=None):
 
             ax.text(x + i * 0.2, y, id, horizontalalignment='center', verticalalignment='center',
                     transform=ax.transAxes, color='r', fontsize=20)
-            ax.text((x-0.001)+i*0.2, y-0.07, au, horizontalalignment='center', verticalalignment='center',
+            ax.text((x-0.001)+i*0.2, y-0.07, int(au*1000)*0.001, horizontalalignment='center', verticalalignment='center',
                     transform=ax.transAxes, color='b', fontsize=20)
             i+=1
 
     if title is not None:
-        ax.text(0.5, 0.95, title, horizontalalignment='center', verticalalignment='center',
-                transform=ax.transAxes, color='r', fontsize=20)
+        ax.text(0.5, 0.95, title, horizontalalignment='center', verticalalignment='center', transform=ax.transAxes, color='r', fontsize=20)
 
     fig.canvas.draw()
     data = np.fromstring(fig.canvas.tostring_rgb(), dtype=np.uint8, sep='')

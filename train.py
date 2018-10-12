@@ -27,13 +27,18 @@ class Train:
         self._train()
 
     def _train(self):
+        print("**************** starting train")
         self._total_steps = self._opt.load_epoch * self._dataset_train_size
         self._iters_per_epoch = self._dataset_train_size / self._opt.batch_size
         self._last_display_time = None
         self._last_save_latest_time = None
         self._last_print_time = time.time()
-
+        print("**************** ")
+        print(self._opt.load_epoch)
+        print(self._opt.nepochs_no_decay)
+        print(self._opt.nepochs_decay)
         for i_epoch in range(self._opt.load_epoch + 1, self._opt.nepochs_no_decay + self._opt.nepochs_decay + 1):
+            print("***************** at least in loop")
             epoch_start_time = time.time()
 
             # train epoch
@@ -83,6 +88,7 @@ class Train:
                 self._display_visualizer_val(i_epoch, self._total_steps)
                 self._last_display_time = time.time()
 
+            # save model
             # save model
             if self._last_save_latest_time is None or time.time() - self._last_save_latest_time > self._opt.save_latest_freq_s:
                 print('saving the latest model (epoch %d, total_steps %d)' % (i_epoch, self._total_steps))

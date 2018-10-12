@@ -5,6 +5,7 @@ from PIL import Image
 import random
 import numpy as np
 import pickle
+import glob
 from utils import cv_utils
 
 
@@ -29,14 +30,17 @@ class AusDataset(DatasetBase):
 
             # get sample data
             sample_id = self._ids[index]
-
+            if sample_id in ['4717118ab666848b5d80a34eed4c0b441748c2223abc530ec0bfaaf1', 'd00f7ea8687b14cfd427d5c5fd6cf9277e2466cd6088ce4dea5cda04', '262df74468b65ab6138269a3ef57f6e2a0308adb403841ebc2734d35']:
+                print 'BAD AU DATA, skipped'
+                continue
+        #    print(sample_id)
             real_img, real_img_path = self._get_img_by_id(sample_id)
             real_cond = self._get_cond_by_id(sample_id)
 
             if real_img is None:
-                print 'error reading image %s, skipping sample' % sample_id
+                print('error reading image %s, skipping sample' % sample_id)
             if real_cond is None:
-                print 'error reading aus %s, skipping sample' % sample_id
+                print('error reading aus %s, skipping sample' % sample_id)
 
         desired_cond = self._generate_random_cond()
 
@@ -61,6 +65,7 @@ class AusDataset(DatasetBase):
     def _read_dataset_paths(self):
         self._root = self._opt.data_dir
         self._imgs_dir = os.path.join(self._root, self._opt.images_folder)
+        # self._imgs_dir = self._opt.images_folder
 
         # read ids
         use_ids_filename = self._opt.train_ids_file if self._is_for_train else self._opt.test_ids_file
@@ -79,12 +84,14 @@ class AusDataset(DatasetBase):
     def _create_transform(self):
         if self._is_for_train:
             transform_list = [transforms.RandomHorizontalFlip(),
+                              transforms.Resize(128),
                               transforms.ToTensor(),
                               transforms.Normalize(mean=[0.5, 0.5, 0.5],
                                                    std=[0.5, 0.5, 0.5]),
                               ]
         else:
-            transform_list = [transforms.ToTensor(),
+            transform_list = [transforms.Resize(128),
+                              transforms.ToTensor(),
                               transforms.Normalize(mean=[0.5, 0.5, 0.5],
                                                    std=[0.5, 0.5, 0.5]),
                               ]
@@ -99,13 +106,16 @@ class AusDataset(DatasetBase):
             return pickle.load(f)
 
     def _get_cond_by_id(self, id):
+#        print("the id is in"+id)
         if id in self._conds:
             return self._conds[id]/5.0
         else:
             return None
 
     def _get_img_by_id(self, id):
-        filepath = os.path.join(self._imgs_dir, id+'.jpg')
+        filepath = os.path.join(self._root, self._imgs_dir, id)
+        filepath = glob.glob(filepath +"*")[0]
+        print(filepath)
         return cv_utils.read_cv2_img(filepath), filepath
 
     def _generate_random_cond(self):

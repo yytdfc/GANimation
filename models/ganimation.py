@@ -35,15 +35,15 @@ class GANimation(BaseModel):
         # generator network
         self._G = self._create_generator()
         self._G.init_weights()
-        if len(self._gpu_ids) > 1:
-            self._G = torch.nn.DataParallel(self._G, device_ids=self._gpu_ids)
+#        if len(self._gpu_ids) > 1:
+#            self._G = torch.nn.DataParallel(self._G, device_ids=self._gpu_ids)
         self._G.cuda()
 
         # discriminator network
         self._D = self._create_discriminator()
         self._D.init_weights()
-        if len(self._gpu_ids) > 1:
-            self._D = torch.nn.DataParallel(self._D, device_ids=self._gpu_ids)
+#        if len(self._gpu_ids) > 1:
+#            self._D = torch.nn.DataParallel(self._D, device_ids=self._gpu_ids)
         self._D.cuda()
 
     def _create_generator(self):
@@ -350,7 +350,7 @@ class GANimation(BaseModel):
         visuals['4_fake_img_unmasked'] = self._vis_fake_img_unmasked
         visuals['5_fake_img_mask'] = self._vis_fake_img_mask
         visuals['6_rec_real_img_mask'] = self._vis_rec_real_img_mask
-        visuals['7_cyc_img_unmasked'] = self._vis_fake_img_unmasked
+        visuals['7_cyc_img_unmasked'] = self._vis_rec_img_unmasked
         # visuals['8_fake_img_mask_sat'] = self._vis_fake_img_mask_saturated
         # visuals['9_rec_real_img_mask_sat'] = self._vis_rec_real_img_mask_saturated
         visuals['10_batch_real_img'] = self._vis_batch_real_img

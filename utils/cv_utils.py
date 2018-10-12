@@ -1,6 +1,31 @@
 import cv2
-from matplotlib import pyplot as plt
+#from matplotlib import pyplot as plt
 import numpy as np
+from PIL import Image
+
+def read_cv2_img_u(path):
+    '''
+    Read color images
+    :param path: Path to image
+    :return: Only returns color images
+    '''
+ #   img = cv2.imread(path, -1)
+ #   print("**********")
+    img = Image.open(path)    
+    print(path)
+    img = img.convert('RGB')
+ #   print("imgconvert")
+    img = np.array(img)
+    print(img.shape)
+    img = cv2.resize(img, (256, 256))
+    if img is not None:
+        if len(img.shape) != 3:
+    #        print("the shape is wrong:" + path)
+            return None
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
+    return img
+
 
 def read_cv2_img(path):
     '''
@@ -9,7 +34,9 @@ def read_cv2_img(path):
     :return: Only returns color images
     '''
     img = cv2.imread(path, -1)
+    #img = cv2.resize(img, (128, 128))
 
+    # print(path, img.shape)
     if img is not None:
         if len(img.shape) != 3:
             return None
@@ -17,6 +44,7 @@ def read_cv2_img(path):
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
     return img
+
 
 def show_cv2_img(img, title='img'):
     '''
