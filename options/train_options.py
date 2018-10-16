@@ -24,6 +24,7 @@ class TrainOptions(BaseOptions):
         self._parser.add_argument('--lambda_D_prob', type=float, default=1, help='lambda for real/fake discriminator loss')
         self._parser.add_argument('--lambda_D_cond', type=float, default=4000, help='lambda for condition discriminator loss')
         self._parser.add_argument('--lambda_cyc', type=float, default=100, help='lambda cycle loss')
+        self._parser.add_argument('--lambda_idt', type=float, default=10, help='lambda identity loss')
         self._parser.add_argument('--lambda_mask', type=float, default=0.1, help='lambda mask loss')
         self._parser.add_argument('--lambda_D_gp', type=float, default=10, help='lambda gradient penalty loss')
         self._parser.add_argument('--lambda_mask_smooth', type=float, default=1e-5, help='lambda mask smooth loss')

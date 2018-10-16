@@ -53,19 +53,19 @@ class Generator(NetworkBase):
         layers.append(nn.Sigmoid())
         self.attetion_reg = nn.Sequential(*layers)
 
-        for param in self.main.parameters():
-            param.requires_grad = False
-        for param in self.attetion_reg.parameters():
-            param.requires_grad = False
+        # for param in self.main.parameters():
+            # param.requires_grad = False
+        # for param in self.attetion_reg.parameters():
+            # param.requires_grad = False
 
     def forward(self, x, c):
         # replicate spatially and concatenate domain information
-        with torch.no_grad():
-            c = c.unsqueeze(2).unsqueeze(3)
-            c = c.expand(c.size(0), c.size(1), x.size(2), x.size(3))
-            x = torch.cat([x, c], dim=1)
-            features = self.main(x)
-            attention = self.attetion_reg(features)
+        # with torch.no_grad():
+        c = c.unsqueeze(2).unsqueeze(3)
+        c = c.expand(c.size(0), c.size(1), x.size(2), x.size(3))
+        x = torch.cat([x, c], dim=1)
+        features = self.main(x)
+        attention = self.attetion_reg(features)
         return self.img_reg(features), attention
 
 class ResidualBlock(nn.Module):
