@@ -56,8 +56,9 @@ class MorphFacesInTheWild:
         return copy.copy(morphed_img)
 
     def _img_morph(self, img, expresion):
-        bbs = face_recognition.face_locations(img)
-        if len(bbs) > 0:
+        # bbs = face_recognition.face_locations(img)
+        # if len(bbs) > 0:
+        if 0:
             y, right, bottom, x = bbs[0]
             bb = x, y, (right - x), (bottom - y)
             face = face_utils.crop_face_with_bb(img, bb)
