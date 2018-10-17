@@ -75,7 +75,7 @@ class MorphFacesInTheWild:
         test_batch = {'real_img': face, 'real_cond': expresion, 'desired_cond': expresion, 'sample_id': torch.FloatTensor(), 'real_img_path': []}
         self._model.set_input(test_batch)
         imgs, _ = self._model.forward(keep_data_for_visuals=False, return_estimates=True)
-        return imgs['real_img'], imgs['fake_imgs_masked'], imgs['fake_imgs']
+        return imgs['real_img'], imgs['fake_imgs_masked'], imgs['fake_imgs'], imgs['fake_img_mask']
 
     def _save_img(self, img, filename):
         filepath = os.path.join(self._opt.output_dir, filename)
@@ -114,20 +114,24 @@ def main():
 
     morph = MorphFacesInTheWild(opt)
 
-    with open(opt.input_path, 'r') as f:
+    with open(opt.data_dir + '/' + opt.input_path, 'r') as f:
         big_img = []
         for image_path in f.readlines()[:10]:
             image_path = opt.data_dir + '/' + opt.images_folder + '/' + image_path.strip()
             print(image_path)
             imgs = []
             for expression in emotions_au:
-                real_img, img, mask = morph.morph_file(image_path, expression)
-                imgs.append(np.concatenate([img,
-                                            mask
-                                            ]))
-            imgs = [np.concatenate([np.array(real_img),
-                                    np.zeros((128, 128, 3), dtype=np.uint8) + 255
-                                    ])] + imgs
+                real_img, img, mask, attention = morph.morph_file(image_path, expression)
+                imgs.append(np.concatenate([
+                    img,
+                    mask,
+                    attention,
+                ]))
+            imgs = [np.concatenate([
+                np.array(real_img),
+                np.zeros((128, 128, 3), dtype=np.uint8) + 255,
+                np.zeros((128, 128, 3), dtype=np.uint8) + 255,
+            ])] + imgs
             imgs = np.concatenate(imgs, 1)
             big_img.append(imgs)
             # morph._save_img(imgs, image_path.split('/')[-1])
