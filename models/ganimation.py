@@ -226,7 +226,7 @@ class GANimation(BaseModel):
         fake_imgs, fake_img_mask = self._G.forward(self._real_img, self._desired_cond)
         fake_img_mask = self._do_if_necessary_saturate_mask(fake_img_mask, saturate=self._opt.do_saturate_mask)
         fake_imgs_masked = fake_img_mask * self._real_img + (1 - fake_img_mask) * fake_imgs
-        self._loss_g_idt = self._criterion_cycle(fake_img_mask * fake_imgs, fake_img_mask.detach() * self._real_img) * self._opt.lambda_idt
+        # self._loss_g_idt = self._criterion_cycle(fake_img_mask * fake_imgs, fake_img_mask.detach() * self._real_img) * self._opt.lambda_idt
 
         # D(G(Ic1, c2)*M) masked
         d_fake_desired_img_masked_prob, d_fake_desired_img_masked_cond = self._D.forward(fake_imgs_masked)
@@ -267,7 +267,7 @@ class GANimation(BaseModel):
         return self._loss_g_masked_fake + self._loss_g_masked_cond + \
                self._loss_g_cyc + \
                self._loss_g_mask_1 + self._loss_g_mask_2 + \
-               self._loss_g_mask_1_smooth + self._loss_g_mask_2_smooth + self._loss_g_idt
+               self._loss_g_mask_1_smooth + self._loss_g_mask_2_smooth #+ self._loss_g_idt
 
     def _forward_D(self):
         # generate fake images

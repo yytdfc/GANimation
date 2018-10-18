@@ -2,6 +2,9 @@ import torch.nn as nn
 import numpy as np
 from .networks import NetworkBase
 
+def SN_Conv2d(*args, **kwargs):
+    return nn.utils.spectral_norm(nn.Conv2d(*args, **kwargs))
+
 class Discriminator(NetworkBase):
     """Discriminator. PatchGAN."""
     def __init__(self, image_size=128, conv_dim=64, c_dim=5, repeat_num=6):
@@ -9,12 +12,12 @@ class Discriminator(NetworkBase):
         self._name = 'discriminator_wgan'
 
         layers = []
-        layers.append(nn.Conv2d(3, conv_dim, kernel_size=4, stride=2, padding=1))
+        layers.append(SN_Conv2d(3, conv_dim, kernel_size=4, stride=2, padding=1))
         layers.append(nn.LeakyReLU(0.01, inplace=True))
 
         curr_dim = conv_dim
         for i in range(1, repeat_num):
-            layers.append(nn.Conv2d(curr_dim, curr_dim*2, kernel_size=4, stride=2, padding=1))
+            layers.append(SN_Conv2d(curr_dim, curr_dim*2, kernel_size=4, stride=2, padding=1))
             layers.append(nn.LeakyReLU(0.01, inplace=True))
             curr_dim = curr_dim * 2
 
